@@ -45,6 +45,7 @@ class TraceHandler {
   }
 
   async processQueue() {
+    console.log("process queue: ", this.queue.length, this.processingQueue);
     if (!this.queue.length || this.processingQueue) {
       return;
     }
