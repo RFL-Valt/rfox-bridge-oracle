@@ -46,9 +46,9 @@ class TraceHandler {
 
   async processQueue() {
     console.log("process queue: ", this.queue.length, this.processingQueue);
-    // if (!this.queue.length || this.processingQueue) {
-    //   return;
-    // }
+    if (!this.queue.length || this.processingQueue) {
+      return;
+    }
     if (!tx_dispatcher) {
       console.log(`No dispatcher yet`);
     }
@@ -144,7 +144,7 @@ class TraceHandler {
   }
 
   async processTrace(block_num, traces, block_timestamp) {
-    // console.log(block_num);
+    console.log("trace:", block_num);
 
     for (const trace of traces) {
       switch (trace[0]) {
@@ -157,7 +157,7 @@ class TraceHandler {
               case "action_trace_v0":
                 if (
                   action[1].act.account === this.config.eos.bridgeContract &&
-                  action[1].act.name === "logbridge"
+                  action[1].act.name === "logteleport"
                 ) {
                   const action_deser = await eos_api.deserializeActions([
                     action[1].act,
