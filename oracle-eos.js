@@ -68,15 +68,16 @@ class TraceHandler {
     }
 
     try {
+      console.log("getting data");
       const bridge_res = await rpc.get_table_rows({
         code: config.eos.bridgeContract,
         scope: config.eos.bridgeContract,
-        table: "bridges",
+        table: "teleports",
         lower_bound: data.id,
         upper_bound: data.id,
         limit: 1,
       });
-      // console.log(bridge_res);
+      console.log(bridge_res);
       if (!bridge_res.rows.length) {
         throw new Error(`Could not find bridge with id ${data.id}`);
       }
