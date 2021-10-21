@@ -45,6 +45,7 @@ class TraceHandler {
   }
 
   async processQueue() {
+    //console.log("process queue: ", this.queue.length, this.processingQueue);
     if (!this.queue.length || this.processingQueue) {
       return;
     }
@@ -67,15 +68,16 @@ class TraceHandler {
     }
 
     try {
+      console.log("getting data");
       const bridge_res = await rpc.get_table_rows({
         code: config.eos.bridgeContract,
         scope: config.eos.bridgeContract,
-        table: "bridges",
+        table: "teleports",
         lower_bound: data.id,
         upper_bound: data.id,
         limit: 1,
       });
-      // console.log(bridge_res);
+      console.log(bridge_res);
       if (!bridge_res.rows.length) {
         throw new Error(`Could not find bridge with id ${data.id}`);
       }
@@ -142,7 +144,7 @@ class TraceHandler {
   }
 
   async processTrace(block_num, traces, block_timestamp) {
-    // console.log(block_num);
+    //console.log("trace:", block_num);
 
     for (const trace of traces) {
       switch (trace[0]) {
@@ -155,7 +157,7 @@ class TraceHandler {
               case "action_trace_v0":
                 if (
                   action[1].act.account === this.config.eos.bridgeContract &&
-                  action[1].act.name === "logbridge"
+                  action[1].act.name === "logteleport"
                 ) {
                   const action_deser = await eos_api.deserializeActions([
                     action[1].act,
