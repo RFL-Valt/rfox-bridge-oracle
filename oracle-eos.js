@@ -45,7 +45,7 @@ class TraceHandler {
   }
 
   async processQueue() {
-    console.log("process queue: ", this.queue.length, this.processingQueue);
+    //console.log("process queue: ", this.queue.length, this.processingQueue);
     if (!this.queue.length || this.processingQueue) {
       return;
     }
@@ -144,7 +144,7 @@ class TraceHandler {
   }
 
   async processTrace(block_num, traces, block_timestamp) {
-    console.log("trace:", block_num);
+    //console.log("trace:", block_num);
 
     for (const trace of traces) {
       switch (trace[0]) {
