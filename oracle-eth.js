@@ -101,15 +101,31 @@ const process_claimed = async (from_block, to_block) => {
             res[r].data
           );
 
-          // console.log(res[r], data, data[1].toString());
+          //console.log(res[r], data, data[1].toString());
           const id = data[0].toNumber();
           const to_eth = data[1].replace("0x", "") + "000000000000000000000000";
-          const quantity =
-            (data[2].toNumber() / Math.pow(10, config.precision)).toFixed(
-              config.precision
-            ) +
-            " " +
-            config.symbol;
+          // const quantity =
+          //   (data[2].toNumber() / Math.pow(10, config.precision)).toFixed(
+          //     config.precision
+          //   ) +
+          //   " " +
+          //   config.symbol;
+          // console.log("converting quantity", id, to_eth);
+          const tokens = data[2].toString();
+
+          const tokensConverted = new ethers.BigNumber.from(tokens);
+          const tokensDivider = new ethers.BigNumber.from(
+            new ethers.BigNumber.from(10).pow(config.ethPrecision)
+          );
+
+          // console.log("New Claim Tx: ", tokensConverted.toString());
+
+          const amount = tokensConverted.div(tokensDivider);
+
+          const amountParsed = amount.toNumber().toFixed(config.precision);
+
+          const quantity = `${amountParsed} ${config.symbol}`;
+
           const actions = [];
           actions.push({
             account: config.eos.bridgeContract,
@@ -127,7 +143,7 @@ const process_claimed = async (from_block, to_block) => {
               quantity,
             },
           });
-          // console.log(actions, res[r].transactionHash);
+          // console.log("actions", actions);
 
           await_confirmation(res[r].transactionHash).then(async () => {
             try {
@@ -208,7 +224,11 @@ const process_bridgeed = async (from_block, to_block) => {
             new ethers.BigNumber.from(10).pow(config.ethPrecision)
           );
 
-          console.log("tokensConverted", tokensConverted.toString());
+          // console.log(
+          //   "new bridge tx:",
+          //   tokensConverted.toString(),
+          //   res[r].transactionHash
+          // );
 
           const amount = tokensConverted.div(tokensDivider);
 
