@@ -25,6 +25,8 @@ const config = require(config_file);
 const web3 = new Web3(new Web3.providers.HttpProvider(config.eth.endpoint));
 const signatureProvider = new JsSignatureProvider([config.eos.privateKey]);
 const rpc = new JsonRpc(config.eos.endpoint, { fetch });
+const provider = new ethers.providers.JsonRpcProvider(config.eth.endpoint);
+
 const eos_api = new Api({
   rpc,
   signatureProvider,
@@ -85,15 +87,15 @@ class TraceHandler {
 
       // sign the transaction and send to the eos chain
       const data_buf = Buffer.from(data_serialized);
-      const msg_hash = ethUtil.keccak(data_buf);
-      console.log(msg_hash.toString("hex"));
-      // console.log(this.config.eth.privateKey);
-      const pk = Buffer.from(this.config.eth.privateKey, "hex");
-      const sig = ethUtil.ecsign(msg_hash, pk);
-      // console.log(pk, sig);
+      const msg_hash = ethers.utils.keccak256(data_buf);
 
-      const signature = ethUtil.toRpcSig(sig.v, sig.r, sig.s);
-      console.log(`Created signature ${signature}`);
+      console.log(msg_hash.toString("hex"));
+
+      const wallet = new ethers.Wallet(this.config.eth.privateKey, provider);
+
+      const signature = await wallet.signMessage(
+        ethers.utils.arrayify(msg_hash)
+      );
 
       const actions = [
         {
