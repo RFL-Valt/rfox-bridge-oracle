@@ -19,6 +19,7 @@ const { fork } = require("child_process");
 
 const Web3 = require("web3");
 const ethUtil = require("ethereumjs-util");
+const ethers = require("ethers");
 
 const config = require(config_file);
 
